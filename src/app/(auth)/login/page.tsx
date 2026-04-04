@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { signIn } from "@/lib/auth";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, Tag } from "lucide-react";
+import { ArrowLeft, Lock, Mail, Tag } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -52,6 +53,13 @@ export default function LoginPage() {
       {/* Kolom Kanan: Form Login */}
       <div className="flex flex-col justify-center items-center p-8 sm:p-12">
         <div className="w-full max-w-md space-y-8">
+          <div className="mb-8">
+            <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-neutral-500 hover:text-neutral-900 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+              Kembali ke Beranda
+            </Link>
+          </div>
+
           <div className="text-center lg:text-left">
             <h2 className="text-3xl font-bold tracking-tight">Selamat Datang</h2>
             <p className="text-neutral-500 mt-2">Silakan login untuk mengakses dashboard admin.</p>
