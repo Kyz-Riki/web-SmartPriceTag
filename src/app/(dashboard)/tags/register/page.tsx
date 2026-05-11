@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { setDeviceMode, listenDeviceState, clearPendingUid, isDeviceOnline } from "@/lib/device";
 import { registerTag, listenTags } from "@/lib/tags";
 import type { DeviceState, TagsRecord } from "@/types";
@@ -22,26 +22,39 @@ export default function RegisterTagPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Ref to track if we activated register mode (for cleanup on unmount)
+  const activatedRegisterRef = useRef(false);
+  // Ref to track detectedUid without stale closure
+  const detectedUidRef = useRef<string | null>(null);
+
+  // Keep ref in sync
+  useEffect(() => {
+    detectedUidRef.current = detectedUid;
+  }, [detectedUid]);
+
   // Subscribe to device state and tags (to check alias duplication)
   useEffect(() => {
     const unsubDevice = listenDeviceState((state) => {
       setDeviceState(state);
       if (state?.pending_uid) {
         setDetectedUid(state.pending_uid);
-      } else {
-        // If pending_uid becomes null unexpectedly (maybe cleared by another admin)
-        // Only clear if we were already showing a UID
-        if (detectedUid && productName === "") {
-            setDetectedUid(null);
-        }
+      } else if (!detectedUidRef.current) {
+        // Only clear if we haven't already detected a UID for registration
+        setDetectedUid(null);
       }
     });
 
     const unsubTags = listenTags(setTags);
 
+    // Cleanup: reset ESP32 ke standby saat user meninggalkan halaman
     return () => {
       unsubDevice();
       unsubTags();
+      // Auto-reset mode ke standby jika kita yang mengaktifkan register mode
+      if (activatedRegisterRef.current) {
+        setDeviceMode("standby").catch(() => {});
+        activatedRegisterRef.current = false;
+      }
     };
   }, []);
 
@@ -52,6 +65,7 @@ export default function RegisterTagPage() {
     setError(null);
     try {
       await setDeviceMode("register");
+      activatedRegisterRef.current = true;
       setDetectedUid(null);
     } catch (err: any) {
       setError("Gagal mengaktifkan mode scan. Coba lagi.");
@@ -59,7 +73,14 @@ export default function RegisterTagPage() {
   }
 
   async function handleCancel() {
-    await clearPendingUid();
+    try {
+      // Eksplisit set mode ke standby DAN clear pending_uid
+      await setDeviceMode("standby");
+      await clearPendingUid();
+    } catch (err) {
+      console.error("Gagal reset mode:", err);
+    }
+    activatedRegisterRef.current = false;
     setDetectedUid(null);
     setAlias("");
     setProductName("");
@@ -107,8 +128,10 @@ export default function RegisterTagPage() {
       // Register tag
       await registerTag(detectedUid, alias, productName, priceNum);
       
-      // Cleanup device state
+      // Cleanup device state — pastikan mode kembali ke standby
       await clearPendingUid();
+      await setDeviceMode("standby");
+      activatedRegisterRef.current = false;
       
       // Redirect to products/tags
       router.push("/products");

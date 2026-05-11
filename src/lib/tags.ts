@@ -97,3 +97,19 @@ export async function registerTag(
 
   await set(ref(db, `${TAGS_PATH}/${uid}`), tagData);
 }
+
+/**
+ * Batch set multiple tags as inactive (sold).
+ * Dipanggil setelah customer confirm order di kiosk.
+ * Menggunakan multi-path update agar atomic.
+ */
+export async function setTagsInactive(uids: string[]): Promise<void> {
+  if (uids.length === 0) return;
+
+  const updates: Record<string, boolean> = {};
+  for (const uid of uids) {
+    updates[`${TAGS_PATH}/${uid}/is_active`] = false;
+  }
+
+  await update(ref(db), updates);
+}

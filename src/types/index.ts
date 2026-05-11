@@ -32,3 +32,46 @@ export interface ScanLog {
 
 /** Record of scan logs keyed by Firebase push key (e.g. "-NxABCD1234") */
 export type ScanLogsRecord = Record<string, ScanLog>;
+
+// ============================================
+// UPDATE v2.0 — Cart & Orders
+// ============================================
+
+/** Item di dalam keranjang kiosk */
+export interface CartItem {
+  alias: string;
+  product_name: string;
+  price: number;
+  scanned_at: number;
+}
+
+/** Record of cart items keyed by RFID UID */
+export type CartItemsRecord = Record<string, CartItem>;
+
+/** State keseluruhan cart */
+export interface Cart {
+  status: "idle" | "active";
+  last_updated: number;
+  items: CartItemsRecord | null; // null jika kosong
+}
+
+/** Item snapshot di dalam order (sudah di-checkout) */
+export interface OrderItem {
+  tag_uid: string;
+  alias: string;
+  product_name: string;
+  price: number;
+}
+
+/** Satu order yang dibuat dari kiosk */
+export interface Order {
+  items: OrderItem[];
+  total: number;
+  item_count: number;
+  status: "pending" | "done";
+  created_at: number;
+  completed_at: number | null;
+}
+
+/** Record of orders keyed by Firebase push key */
+export type OrdersRecord = Record<string, Order>;

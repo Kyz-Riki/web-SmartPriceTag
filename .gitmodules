@@ -1,0 +1,3 @@
+[submodule "esp32/SmartPriceTag"]
+	path = esp32/SmartPriceTag
+	url = https://github.com/Kyz-Riki/SmartPriceTag.git

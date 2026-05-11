@@ -37,7 +37,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Produk", href: "/products", icon: Tags },
     { name: "Registrasi Tag", href: "/tags/register", icon: PlusSquare },
-    { name: "Riwayat", href: "/history", icon: History },
+    { name: "Riwayat Pesanan", href: "/history", icon: History },
   ];
 
   return (

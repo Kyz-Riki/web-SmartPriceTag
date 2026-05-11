@@ -2,19 +2,23 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { listenTags } from "@/lib/tags";
-import { listenDeviceState, isDeviceOnline } from "@/lib/device";
+import { listenDeviceState, isDeviceOnline, setDeviceMode, clearPendingUid } from "@/lib/device";
 import { listenLogsByDateRange } from "@/lib/logs";
-import type { TagsRecord, DeviceState, ScanLog } from "@/types";
-import { Tags, Tag, Activity, Wifi, WifiOff } from "lucide-react";
+import type { TagsRecord, DeviceState, ScanLog, OrdersRecord } from "@/types";
+import { listenOrders } from "@/lib/orders";
+import { Tags, Tag, Activity, Wifi, WifiOff, RefreshCw } from "lucide-react";
 
 export default function DashboardPage() {
   const [tags, setTags] = useState<TagsRecord>({});
   const [deviceState, setDeviceState] = useState<DeviceState | null>(null);
   const [todayScans, setTodayScans] = useState<Record<string, ScanLog>>({});
+  const [orders, setOrders] = useState<OrdersRecord>({});
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     const unsubTags = listenTags(setTags);
     const unsubDevice = listenDeviceState(setDeviceState);
+    const unsubOrders = listenOrders(setOrders);
 
     // Get today's bounds
     const startOfDay = new Date();
@@ -34,6 +38,7 @@ export default function DashboardPage() {
       unsubTags();
       unsubDevice();
       unsubLogs();
+      unsubOrders();
     };
   }, []);
 
@@ -75,6 +80,18 @@ export default function DashboardPage() {
     },
   ];
 
+  async function handleResetDevice() {
+    setResetting(true);
+    try {
+      await setDeviceMode("standby");
+      await clearPendingUid();
+    } catch (err) {
+      alert("Gagal mereset perangkat");
+    } finally {
+      setResetting(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -101,9 +118,20 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* LCD Monitor Simulation */}
         <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden flex flex-col h-full">
-          <div className="px-6 py-5 border-b border-neutral-200">
-            <h2 className="text-lg font-semibold text-neutral-900">Monitor LCD Real-time</h2>
-            <p className="text-sm text-neutral-500">Tampilan aktual pada layar perangkat ESP32</p>
+          <div className="px-6 py-5 border-b border-neutral-200 flex justify-between items-center gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-neutral-900">Monitor LCD Real-time</h2>
+              <p className="text-sm text-neutral-500">Tampilan aktual pada layar perangkat ESP32</p>
+            </div>
+            <button
+              onClick={handleResetDevice}
+              disabled={resetting || !isOnline}
+              title="Paksa kembali ke mode Standby/Scan"
+              className="flex-shrink-0 px-3 py-1.5 flex items-center gap-2 text-sm font-medium bg-white border border-neutral-200 text-neutral-700 rounded-lg hover:bg-neutral-50 hover:text-blue-600 disabled:opacity-50 transition-colors shadow-sm"
+            >
+              <RefreshCw className={`w-4 h-4 ${resetting ? "animate-spin text-blue-600" : ""}`} />
+              <span className="hidden sm:inline">{resetting ? "Mereset..." : "Reset Mode"}</span>
+            </button>
           </div>
           <div className="p-6 flex-1 flex flex-col justify-center items-center bg-neutral-50">
             <div className="relative w-full max-w-sm">
