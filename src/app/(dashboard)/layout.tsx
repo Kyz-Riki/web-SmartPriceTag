@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { onAuthStateChange, signOut } from "@/lib/auth";
 import type { User } from "firebase/auth";
-import { LayoutDashboard, Tags, History, PlusSquare, LogOut, Menu, X, Tag } from "lucide-react";
+import { LayoutDashboard, Tags, History, PlusSquare, LogOut, Menu, X, Tag, ScanBarcode } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -37,6 +37,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Produk", href: "/products", icon: Tags },
     { name: "Registrasi Tag", href: "/tags/register", icon: PlusSquare },
+    { name: "Scan Tag", href: "/tags/scan", icon: ScanBarcode },
     { name: "Riwayat Pesanan", href: "/history", icon: History },
   ];
 
