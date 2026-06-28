@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { listenTags } from "@/lib/tags";
-import { listenDeviceState, isDeviceOnline, setDeviceMode, clearPendingUid } from "@/lib/device";
+import { listenDeviceState, isDeviceOnline, setSystemMode, clearPendingUid } from "@/lib/device";
 import { listenLogsByDateRange } from "@/lib/logs";
 import type { TagsRecord, DeviceState, ScanLog, OrdersRecord } from "@/types";
 import { listenOrders } from "@/lib/orders";
@@ -83,7 +83,7 @@ export default function DashboardPage() {
   async function handleResetDevice() {
     setResetting(true);
     try {
-      await setDeviceMode("standby");
+      await setSystemMode("STANDBY");
       await clearPendingUid();
     } catch (err) {
       alert("Gagal mereset perangkat");

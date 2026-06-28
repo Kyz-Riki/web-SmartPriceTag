@@ -25,23 +25,24 @@ export function listenDeviceState(
 
 /**
  * Set the ESP32 operating mode.
- * - "register": ESP32 enters RFID scan mode, ready to read new tags.
- * - "standby":  ESP32 returns to normal operation.
+ * - "STANDBY": ESP32 returns to normal idle operation.
+ * - "ADMIN": ESP32 enters RFID scan mode for registering/identifying tags.
+ * - "CHECKOUT": ESP32 enters RFID scan mode for kiosk checkout.
  */
-export async function setDeviceMode(mode: "standby" | "register"): Promise<void> {
+export async function setSystemMode(mode: "STANDBY" | "ADMIN" | "CHECKOUT"): Promise<void> {
   const deviceRef = ref(db, DEVICE_PATH);
-  await update(deviceRef, { mode });
+  await update(deviceRef, { system_mode: mode });
 }
 
 /**
  * Clear pending_uid after a tag has been registered.
- * Also resets mode to "standby".
+ * Also resets mode to "STANDBY".
  */
 export async function clearPendingUid(): Promise<void> {
   const deviceRef = ref(db, DEVICE_PATH);
   await update(deviceRef, {
     pending_uid: null,
-    mode: "standby",
+    system_mode: "STANDBY",
   });
 }
 

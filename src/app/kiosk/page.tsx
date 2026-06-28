@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { listenCartItems, clearCart } from "@/lib/cart";
+import { setSystemMode } from "@/lib/device";
 import type { CartItemsRecord, CartItem } from "@/types";
 
 import IdleScreen from "@/components/kiosk/IdleScreen";
@@ -32,6 +33,7 @@ export default function KioskPage() {
     inactivityTimerRef.current = setTimeout(async () => {
       console.log("[KIOSK] Inactivity timeout — auto-clearing cart");
       await clearCart();
+      await setSystemMode("STANDBY");
       setState("idle");
       prevItemCountRef.current = 0;
     }, INACTIVITY_TIMEOUT_MS);
@@ -55,6 +57,7 @@ export default function KioskPage() {
 
       if (newCount === 0) {
         // Semua item dihapus → kembali ke idle, stop timer
+        setSystemMode("STANDBY").catch(() => {});
         setState("idle");
         if (inactivityTimerRef.current) {
           clearTimeout(inactivityTimerRef.current);
@@ -104,7 +107,9 @@ export default function KioskPage() {
   }, [resetInactivityTimer]);
 
   // Cancel seluruh belanjaan — cart di-clear, tag tetap active
-  const handleCancelAll = useCallback(() => {
+  const handleCancelAll = useCallback(async () => {
+    await clearCart();
+    await setSystemMode("STANDBY");
     setState("idle");
     prevItemCountRef.current = 0;
     if (inactivityTimerRef.current) {
@@ -113,19 +118,31 @@ export default function KioskPage() {
     }
   }, []);
 
-  const handleOrderSuccess = useCallback(() => {
+  const handleOrderSuccess = useCallback(async () => {
+    await setSystemMode("STANDBY");
     setState("idle");
     prevItemCountRef.current = 0;
     if (inactivityTimerRef.current) {
       clearTimeout(inactivityTimerRef.current);
       inactivityTimerRef.current = null;
+    }
+  }, []);
+
+  const handleStartCheckout = useCallback(async () => {
+    try {
+      await setSystemMode("CHECKOUT");
+      // Optionally we could transition to a different state here if needed,
+      // but if the ESP32 responds and scans a tag, it will push to cart
+      // and we will automatically go to 'feedback' state due to listenCartItems.
+    } catch (err) {
+      console.error("Gagal memulai sesi checkout:", err);
     }
   }, []);
 
   // ---- Render berdasarkan state ----
   switch (state) {
     case "idle":
-      return <IdleScreen />;
+      return <IdleScreen onStartCheckout={handleStartCheckout} />;
 
     case "feedback":
       return lastScannedItem ? (

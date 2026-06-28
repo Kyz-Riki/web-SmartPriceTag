@@ -14,7 +14,7 @@ export interface Tag {
 export type TagsRecord = Record<string, Tag>;
 
 export interface DeviceState {
-  mode: "standby" | "register";
+  system_mode: "STANDBY" | "ADMIN" | "CHECKOUT";
   lcd_line1: string;
   lcd_line2: string;
   online: boolean;

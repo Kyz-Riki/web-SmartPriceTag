@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import {
-  setDeviceMode,
+  setSystemMode,
   listenDeviceState,
   clearPendingUid,
   isDeviceOnline,
@@ -67,7 +67,7 @@ export default function ScanTagPage() {
       unsubTags();
       // Cleanup: reset ESP32 ke standby
       if (activatedRef.current) {
-        setDeviceMode("standby").catch(() => {});
+        setSystemMode("STANDBY").catch(() => {});
         clearPendingUid().catch(() => {});
         activatedRef.current = false;
       }
@@ -112,7 +112,7 @@ export default function ScanTagPage() {
     setScanning(true);
 
     try {
-      await setDeviceMode("register");
+      await setSystemMode("ADMIN");
       activatedRef.current = true;
     } catch {
       setScanning(false);
@@ -126,7 +126,7 @@ export default function ScanTagPage() {
 
     try {
       await clearPendingUid();
-      await setDeviceMode("register");
+      await setSystemMode("ADMIN");
       activatedRef.current = true;
     } catch {
       setScanning(false);
@@ -139,7 +139,7 @@ export default function ScanTagPage() {
     processedUidRef.current = null;
 
     try {
-      await setDeviceMode("standby");
+      await setSystemMode("STANDBY");
       await clearPendingUid();
     } catch {
       // silent
@@ -212,7 +212,7 @@ export default function ScanTagPage() {
         <div className="text-right">
           <p className="text-sm font-medium text-neutral-900">Status Mode</p>
           <span className="inline-flex items-center gap-1.5 py-1 px-2 rounded-md text-xs font-medium bg-neutral-100 text-neutral-600 capitalize">
-            {deviceState?.mode || "Unknown"}
+            {deviceState?.system_mode || "Unknown"}
           </span>
         </div>
       </div>

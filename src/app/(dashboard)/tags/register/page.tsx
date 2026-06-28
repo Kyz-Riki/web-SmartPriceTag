@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import { setDeviceMode, listenDeviceState, clearPendingUid, isDeviceOnline } from "@/lib/device";
+import { setSystemMode, listenDeviceState, clearPendingUid, isDeviceOnline } from "@/lib/device";
 import { registerTag, listenTags } from "@/lib/tags";
 import type { DeviceState, TagsRecord } from "@/types";
 import { useRouter } from "next/navigation";
@@ -52,19 +52,19 @@ export default function RegisterTagPage() {
       unsubTags();
       // Auto-reset mode ke standby jika kita yang mengaktifkan register mode
       if (activatedRegisterRef.current) {
-        setDeviceMode("standby").catch(() => {});
+        setSystemMode("STANDBY").catch(() => {});
         activatedRegisterRef.current = false;
       }
     };
   }, []);
 
   const isOnline = isDeviceOnline(deviceState);
-  const isRegisterMode = deviceState?.mode === "register";
+  const isRegisterMode = deviceState?.system_mode === "ADMIN";
 
   async function handleStartScan() {
     setError(null);
     try {
-      await setDeviceMode("register");
+      await setSystemMode("ADMIN");
       activatedRegisterRef.current = true;
       setDetectedUid(null);
     } catch (err: any) {
@@ -75,7 +75,7 @@ export default function RegisterTagPage() {
   async function handleCancel() {
     try {
       // Eksplisit set mode ke standby DAN clear pending_uid
-      await setDeviceMode("standby");
+      await setSystemMode("STANDBY");
       await clearPendingUid();
     } catch (err) {
       console.error("Gagal reset mode:", err);
@@ -130,7 +130,7 @@ export default function RegisterTagPage() {
       
       // Cleanup device state — pastikan mode kembali ke standby
       await clearPendingUid();
-      await setDeviceMode("standby");
+      await setSystemMode("STANDBY");
       activatedRegisterRef.current = false;
       
       // Redirect to products/tags
@@ -167,7 +167,7 @@ export default function RegisterTagPage() {
         <div className="text-right">
           <p className="text-sm font-medium text-neutral-900">Status Mode</p>
           <span className="inline-flex items-center gap-1.5 py-1 px-2 rounded-md text-xs font-medium bg-neutral-100 text-neutral-600 capitalize">
-            {deviceState?.mode || "Unknown"}
+            {deviceState?.system_mode || "Unknown"}
           </span>
         </div>
       </div>
