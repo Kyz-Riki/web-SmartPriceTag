@@ -92,6 +92,17 @@ export default function DashboardPage() {
     }
   }
 
+  async function handleAdminMode() {
+    setResetting(true);
+    try {
+      await setSystemMode("ADMIN");
+    } catch (err) {
+      alert("Gagal memicu mode Admin");
+    } finally {
+      setResetting(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -123,15 +134,26 @@ export default function DashboardPage() {
               <h2 className="text-lg font-semibold text-neutral-900">Monitor LCD Real-time</h2>
               <p className="text-sm text-neutral-500">Tampilan aktual pada layar perangkat ESP32</p>
             </div>
-            <button
-              onClick={handleResetDevice}
-              disabled={resetting || !isOnline}
-              title="Paksa kembali ke mode Standby/Scan"
-              className="flex-shrink-0 px-3 py-1.5 flex items-center gap-2 text-sm font-medium bg-white border border-neutral-200 text-neutral-700 rounded-lg hover:bg-neutral-50 hover:text-blue-600 disabled:opacity-50 transition-colors shadow-sm"
-            >
-              <RefreshCw className={`w-4 h-4 ${resetting ? "animate-spin text-blue-600" : ""}`} />
-              <span className="hidden sm:inline">{resetting ? "Mereset..." : "Reset Mode"}</span>
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleAdminMode}
+                disabled={resetting || !isOnline}
+                title="Paksa ke mode Admin"
+                className="flex-shrink-0 px-3 py-1.5 flex items-center gap-2 text-sm font-medium bg-white border border-neutral-200 text-neutral-700 rounded-lg hover:bg-neutral-50 hover:text-amber-600 disabled:opacity-50 transition-colors shadow-sm"
+              >
+                <Tag className="w-4 h-4" />
+                <span className="hidden sm:inline">Mode Admin</span>
+              </button>
+              <button
+                onClick={handleResetDevice}
+                disabled={resetting || !isOnline}
+                title="Paksa kembali ke mode Standby/Scan"
+                className="flex-shrink-0 px-3 py-1.5 flex items-center gap-2 text-sm font-medium bg-white border border-neutral-200 text-neutral-700 rounded-lg hover:bg-neutral-50 hover:text-blue-600 disabled:opacity-50 transition-colors shadow-sm"
+              >
+                <RefreshCw className={`w-4 h-4 ${resetting ? "animate-spin text-blue-600" : ""}`} />
+                <span className="hidden sm:inline">{resetting ? "Mereset..." : "Reset"}</span>
+              </button>
+            </div>
           </div>
           <div className="p-6 flex-1 flex flex-col justify-center items-center bg-neutral-50">
             <div className="relative w-full max-w-sm">

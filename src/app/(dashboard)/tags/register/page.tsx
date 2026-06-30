@@ -88,6 +88,15 @@ export default function RegisterTagPage() {
     setError(null);
   }
 
+  async function handleScanUlang() {
+    try {
+      await clearPendingUid();
+      setDetectedUid(null);
+    } catch (err) {
+      console.error("Gagal scan ulang:", err);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -223,6 +232,34 @@ export default function RegisterTagPage() {
                   </button>
                 </>
               )}
+            </div>
+          ) : tags[detectedUid] ? (
+            /* Step 1.5: Validation Error (Tag Already Exists) */
+            <div className="p-12 flex flex-col items-center justify-center text-center">
+              <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
+                <AlertCircle className="w-10 h-10 text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-neutral-900 mb-2">Tag Sudah Terdaftar!</h3>
+              <p className="text-neutral-500 max-w-sm mb-2">
+                Tag dengan UID <strong className="font-mono">{detectedUid}</strong> sudah terdaftar sebagai <strong>{tags[detectedUid].product_name}</strong>.
+              </p>
+              <p className="text-sm text-neutral-400 mb-8">
+                Gunakan menu Produk jika ingin mengubah harga atau nama barang dari tag ini.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  onClick={handleCancel}
+                  className="inline-flex items-center justify-center h-11 px-6 rounded-md bg-white border border-neutral-300 text-neutral-700 font-medium hover:bg-neutral-50 transition-colors"
+                >
+                  Batal (Standby)
+                </button>
+                <button
+                  onClick={handleScanUlang}
+                  className="inline-flex items-center justify-center h-11 px-6 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
+                >
+                  Scan Ulang
+                </button>
+              </div>
             </div>
           ) : (
             /* Step 2: Form Input */

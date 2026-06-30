@@ -70,10 +70,22 @@ export async function clearCart(): Promise<void> {
 }
 
 /**
- * Set status cart (idle / active).
+ * Kosongkan seluruh cart dan set status ke "cancelled".
+ * Dipanggil saat customer membatalkan pesanan.
+ */
+export async function cancelCart(): Promise<void> {
+  await update(ref(db, CART_PATH), {
+    status: "cancelled",
+    items: null,
+    last_updated: Math.floor(Date.now() / 1000),
+  });
+}
+
+/**
+ * Set status cart (idle / active / cancelled).
  */
 export async function setCartStatus(
-  status: "idle" | "active"
+  status: "idle" | "active" | "cancelled"
 ): Promise<void> {
   await update(ref(db, CART_PATH), { status });
 }
