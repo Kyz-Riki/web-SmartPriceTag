@@ -222,7 +222,7 @@ export default function ProductsPage() {
                   required
                   value={editProductName}
                   onChange={(e) => setEditProductName(e.target.value)}
-                  className="flex h-11 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex h-11 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -233,7 +233,7 @@ export default function ProductsPage() {
                   required
                   value={editPrice}
                   onChange={(e) => setEditPrice(e.target.value)}
-                  className="flex h-11 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex h-11 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <p className="text-xs text-neutral-500">Harga sebelumnya: Rp {selectedTag.tag.price.toLocaleString("id-ID")}</p>
               </div>

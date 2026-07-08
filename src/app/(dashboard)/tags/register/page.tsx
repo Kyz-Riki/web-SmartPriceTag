@@ -290,7 +290,7 @@ export default function RegisterTagPage() {
                       value={alias}
                       onChange={(e) => setAlias(e.target.value)}
                       placeholder="Tag-01"
-                      className="flex h-11 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex h-11 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <p className="text-xs text-neutral-500">Nama unik untuk mengenali fisik tag ini. Contoh: Tag-01</p>
                   </div>
@@ -304,7 +304,7 @@ export default function RegisterTagPage() {
                       value={productName}
                       onChange={(e) => setProductName(e.target.value)}
                       placeholder="Kemeja Flanel"
-                      className="flex h-11 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex h-11 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
@@ -317,7 +317,7 @@ export default function RegisterTagPage() {
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                       placeholder="199000"
-                      className="flex h-11 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex h-11 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <p className="text-xs text-neutral-500">Masukkan angka saja. Rp {parseInt(price || "0").toLocaleString("id-ID")}</p>
                   </div>
