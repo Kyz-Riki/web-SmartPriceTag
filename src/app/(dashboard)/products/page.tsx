@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { listenTags, updateTag, toggleTagStatus } from "@/lib/tags";
+import { listenTags, updateTag, toggleTagStatus, deleteTag } from "@/lib/tags";
 import type { Tag, TagsRecord } from "@/types";
 import { formatRelative } from "date-fns";
 import { id } from "date-fns/locale";
-import { Tags, Pencil, Power, X, Loader2, AlertCircle } from "lucide-react";
+import { Tags, Pencil, Power, X, Loader2, AlertCircle, Trash2 } from "lucide-react";
 
 export default function ProductsPage() {
   const [tags, setTags] = useState<TagsRecord>({});
@@ -47,6 +47,16 @@ export default function ProductsPage() {
       await toggleTagStatus(uid);
     } catch (err: any) {
       alert("Gagal mengubah status: " + err.message);
+    }
+  }
+
+  async function handleDeleteTag(uid: string, alias: string) {
+    if (!confirm(`Yakin ingin menghapus tag ${alias}? Tag yang dihapus bisa didaftarkan ulang.`)) return;
+
+    try {
+      await deleteTag(uid);
+    } catch (err: any) {
+      alert("Gagal menghapus tag: " + err.message);
     }
   }
 
@@ -158,6 +168,13 @@ export default function ProductsPage() {
                           title={tag.is_active ? "Set Terjual" : "Set Tersedia"}
                         >
                           <Power className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTag(uid, tag.alias)}
+                          className="inline-flex items-center justify-center w-8 h-8 rounded text-neutral-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                          title="Hapus Tag"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>

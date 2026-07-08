@@ -113,3 +113,12 @@ export async function setTagsInactive(uids: string[]): Promise<void> {
 
   await update(ref(db), updates);
 }
+
+/**
+ * Delete a registered tag from the database.
+ */
+export async function deleteTag(uid: string): Promise<void> {
+  const { remove } = await import("firebase/database");
+  const tagRef = ref(db, `${TAGS_PATH}/${uid}`);
+  await remove(tagRef);
+}
