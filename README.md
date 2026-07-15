@@ -1,38 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Price Tag System
 
-## Getting Started
+Sistem label harga digital berbasis Internet of Things (IoT) yang menggabungkan perangkat keras (ESP32) dan perangkat lunak (Dashboard Next.js) menggunakan sinkronisasi Firebase Realtime Database. Proyek ini bertujuan untuk mengatasi masalah pembaruan label harga konvensional di ritel dengan memungkinkan perubahan nama barang dan harga secara *real-time* langsung dari web tanpa menyentuh perangkat fisik.
 
-First, run the development server:
+## 🌟 Fitur Utama
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 💻 Web Dashboard (Next.js)
+- **Real-time Synchronization:** Perubahan harga dan data produk dari web langsung tersinkronisasi ke perangkat ESP32 secara instan.
+- **Device Management:** Memantau status perangkat (*heartbeat*) apakah sedang *online* atau *offline*.
+- **Mode Kontrol Alat:** Mengontrol perangkat ESP32 untuk berpindah antara **Mode Standby/Kiosk** (cek harga) atau **Mode Register** (pendaftaran RFID Card/Tag baru) dari jarak jauh.
+- **Kiosk Display Mode:** Antarmuka khusus untuk menampilkan informasi produk di layar yang lebih besar kepada pelanggan.
+
+### 🔌 IoT Hardware (ESP32)
+- **Pendeteksi RFID:** Membaca tag MFRC522 dan menampilkan detail barang pada LCD 16x2.
+- **Offline Cache Memory:** ESP32 menyimpan data harga terakhir di memori lokal (*Preferences*). Jika WiFi/Internet terputus, perangkat tetap bisa menampilkan harga terakhir dari tag yang di-scan.
+- **Indikator Visual & Audio:** Menggunakan LED (Hijau & Merah) dan Buzzer aktif untuk memberikan umpan balik saat proses *scan* berhasil atau gagal.
+
+## 🛠️ Tech Stack
+
+### Web Application
+- **Framework:** [Next.js 16](https://nextjs.org/) (React 19)
+- **Styling:** Tailwind CSS v4 & Lucide React
+- **Database / Backend:** Firebase Realtime Database
+- **Language:** TypeScript
+
+### Hardware
+- **Microcontroller:** ESP32 DevKit V1
+- **RFID Module:** MFRC522 (Interface SPI)
+- **Display:** LCD I2C 16x2
+- **Language:** C++ (Arduino IDE)
+
+## 📁 Struktur Proyek Utama
+
+```text
+Project/
+├── esp32/
+│   └── SmartPriceTag/       # Folder source code Arduino (C++) untuk ESP32
+│       ├── smart_price_tag.ino
+│       └── README.md        # Dokumentasi khusus instalasi hardware & skema kabel
+├── src/
+│   ├── app/                 # Routing aplikasi Next.js (Auth, Dashboard, Kiosk)
+│   ├── components/          # Komponen UI Reusable (React)
+│   ├── lib/                 # Utilitas (Konfigurasi Firebase, Device Handler)
+│   └── types/               # Definisi Type/Interface TypeScript
+└── .env.local.example       # Contoh environment variable untuk Web
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Panduan Instalasi (Web Dashboard)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone repository ini:**
+   ```bash
+   git clone <repo-url>
+   cd "Project"
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Instal dependensi web:**
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. **Konfigurasi Environment Variables:**
+   Salin `.env.local.example` menjadi `.env.local` dan isi dengan konfigurasi Firebase Anda:
+   ```env
+   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+   NEXT_PUBLIC_FIREBASE_DATABASE_URL=your_database_url
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Jalankan Development Server:**
+   ```bash
+   npm run dev
+   ```
+   Buka [http://localhost:3000](http://localhost:3000) pada browser Anda.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🔌 Panduan Instalasi (Perangkat Keras / ESP32)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Kode sumber untuk perangkat keras ESP32 tersedia di repositori terpisah yang diintegrasikan sebagai *Git submodule*:
+🔗 **[Repository ESP32: Kyz-Riki/SmartPriceTag](https://github.com/Kyz-Riki/SmartPriceTag.git)**
 
-## Deploy on Vercel
+Untuk melihat skema perkabelan (*wiring*), dependensi *library* Arduino, dan cara me-*flash* kode ke ESP32 secara lokal, silakan merujuk ke dokumentasi khusus perangkat keras di direktori `esp32` proyek ini:
+👉 **[Dokumentasi Hardware ESP32](./esp32/SmartPriceTag/README.md)**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-cekk cekkk
+*Dikembangkan untuk efisiensi ritel masa depan.*
